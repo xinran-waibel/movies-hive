@@ -26,7 +26,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS movies.gl_ratings_raw (
   userId bigint,
   movieId bigint,
   rating double,
-  t timestamp 
+  t bigint 
 )
 row format delimited
 fields terminated by ','
@@ -38,11 +38,12 @@ CREATE TABLE IF NOT EXISTS movies.gl_ratings (
   userId bigint,
   movieId bigint,
   rating double,
-  t timestamp 
+  year string 
 )
-stored as parquet;
-INSERT OVERWRITE TABLE movies.gl_ratings SELECT * FROM movies.gl_ratings_raw;
-
+stored AS parquet;
+INSERT OVERWRITE TABLE movies.gl_ratings
+SELECT userId, movieId, rating, from_unixtime(t, 'YYYY') AS year
+FROM movies.gl_ratings_raw;
 
 
 
